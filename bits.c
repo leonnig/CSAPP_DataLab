@@ -256,7 +256,28 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  return 0;
+  int flag;
+  int cnt_16, cnt_8, cnt_4, cnt_2, cnt_1, cnt_0;
+  int sign = (x>>31);
+  x = (~sign & x) | (sign & ~x);
+  flag = !!(x>>16);
+  cnt_16 = flag<<4; //At least 16;
+  x >>= cnt_16;
+  flag = !!(x>>8);
+  cnt_8 = flag<<3;
+  x >>= cnt_8;
+  flag = !!(x>>4);
+  cnt_4 = flag<<2;
+  x >>= cnt_4;
+  flag = !!(x>>2);
+  cnt_2 = flag<<1;
+  x >>= cnt_2;
+  flag = !!(x>>1);
+  cnt_1 = flag;
+  x >>= cnt_1;
+  flag = !!x;
+  cnt_0 = flag;
+return cnt_16 + cnt_8 + cnt_4 + cnt_2 + cnt_1 + cnt_0 + 1;
 }
 //float
 /* 
