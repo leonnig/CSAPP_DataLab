@@ -292,7 +292,25 @@ return cnt_16 + cnt_8 + cnt_4 + cnt_2 + cnt_1 + cnt_0 + 1;
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-  return 2;
+  if (uf == 0) {
+    return 0;
+  }
+
+  unsigned sign = uf & 0x80000000;
+  unsigned exp = ((uf>>23) & 0x000000FF);
+  unsigned frac = uf & 0x007FFFFF;
+
+  if (exp == 0xFF) {
+    return uf;
+  }
+  else if (exp == 0)
+  {
+    frac <<= 1;
+    return (sign | (exp<<23) | frac); 
+  }
+  
+  exp = (exp+1)<<23;
+  return (uf & 0x807FFFFF) | exp;
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
