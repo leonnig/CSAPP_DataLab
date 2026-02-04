@@ -292,13 +292,14 @@ return cnt_16 + cnt_8 + cnt_4 + cnt_2 + cnt_1 + cnt_0 + 1;
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
+ 
+  int sign = uf & 0x80000000;
+  int exp = ((uf>>23) & 0x000000FF);
+  int frac = uf & 0x007FFFFF;
+
   if (uf == 0) {
     return 0;
   }
-
-  unsigned sign = uf & 0x80000000;
-  unsigned exp = ((uf>>23) & 0x000000FF);
-  unsigned frac = uf & 0x007FFFFF;
 
   if (exp == 0xFF) {
     return uf;
@@ -325,7 +326,18 @@ unsigned floatScale2(unsigned uf) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-  return 2;
+  int sign = (uf >> 31) & 1;
+  int exp = ((uf >> 23) & 0xFF) - 127;
+  int frac = uf & 0x7FFFFF;
+  int res = ((0x800000|frac)>>(23-exp));
+
+  if (exp > 31) return 1<<31;
+  if (exp < 0) return 0;
+  
+  if (sign == 1) {
+    res = (~res + 1);
+  }
+  return res;
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
